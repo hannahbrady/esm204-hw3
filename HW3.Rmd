@@ -129,19 +129,56 @@ MC = `r round(m_MC,6)`Q
 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-
 # Graph for reference
 ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
-  stat_function(fun = D_agg, aes(color = "Aggregate")) +
-  stat_function(fun = D_low, aes(color = "Low")) +
-  stat_function(fun = D_high, aes(color = "High")) +
+  stat_function(fun = D_agg, aes(color = "Aggregate Demand")) +
+  stat_function(fun = D_low, aes(color = "Low Demand")) +
+  stat_function(fun = D_high, aes(color = "High Demand")) +
   stat_function(fun = MC, aes(color = "Supply")) +
   scale_x_continuous(name = "Q (Gallons)") +
   scale_y_continuous(name = "P ($/gal)",limits = c(0, NA)) +
-  labs(color = "Consumer Group") +
+  labs(color = "Curve") +
   theme_minimal()
   
 ```
+
+## Status quo benefits to producers and consumers
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Calculate consumer surplus
+
+# Solve for quantity at kink
+Q_kink <- (int_low-int_agg)/m_agg
+
+# Consumer surplus equals area under high demand curve until kink
+SQ_CS_1 <- integrate(D_high, lower = 0, upper = Q_kink)
+
+# plus area under agg demand curve after kink until intercept with supply curve
+SQ_CS_2 <- integrate(D_agg, lower = Q_kink, upper = Q_eq)
+
+# minus area from price equals 0 to Peq * Qeq
+SQ_CS_total <- SQ_CS_1$value + SQ_CS_2$value - Q_eq*P_eq
+
+# Calculate producer surplus
+
+# Solve for area under supply curve:
+SQ_PS_1 <- integrate(MC, lower = 0, upper = Q_eq)
+
+# Subtract from Qeq*Peq:
+SQ_PS_total <- Q_eq*P_eq - SQ_PS_1$value
+```
+
+Consumer surplus under status quo = \$`r round(SQ_CS_total,0)`.
+
+
+Producer surplus under status quo = \$`r round(SQ_PS_total,0)`.
+
+## Environmental cost under status quo
+
+Under the status quo, the total environmental cost is equal to:
+
+Total Environmental Cost = MEC~gal~ (from Part 1) * Total gallons of gas consumed by society (Q~eq~) = \$`r round(MEC,2)`/gal * `r round(Q_eq,0)` gal of gas = \$`r round(MEC*Q_eq,2)`
+
 
 
 
