@@ -12,6 +12,7 @@ library(here)
 library(ggpubr)
 library(broom)
 library(knitr)
+options(scipen=999)
 ```
 
 
@@ -37,5 +38,111 @@ MEC~gal~ = \$51/metric ton CO~2~ * (1 ton/ 2204.64 lbs) * (19.6 lb CO~2~/gal of 
 
 # Part 2
 
-*What is the aggregate daily demand curve for gasoline? What is the supply curve for gasoline? What is the \"benefit" to consumers under the status quo? What is the \"benefit" to producers under the status quo? What is the environmental cost under the status quo?*
+*What is the aggregate daily demand curve for gasoline? What is the supply curve for gasoline? What is the "benefit" to consumers under the status quo? What is the "benefit" to producers under the status quo? What is the environmental cost under the status quo?*
+
+## Aggregate daily demand curve
+
+Data provided includes price (in \$) and quantity (in gallons) estimates of demand per day for "high" and "low" income groups.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+# Read in data
+data <- read_csv("HW3_data.csv")
+
+# Create 2 linear models
+D_low_lm = lm(Price_Dollars ~ Q_Low_Gallons, data = data)
+D_high_lm = lm(Price_Dollars ~ Q_High_Gallons, data = data)
+
+# Create plot for reference
+ggplot(data = data) +
+  #Low Demand
+  geom_point(aes(x = Q_Low_Gallons, y = Price_Dollars, color = "Low"), size = 3, alpha = 0.5) +
+  geom_smooth(aes(x = Q_Low_Gallons, y = Price_Dollars, color = "Low"), method = "lm", se = F)+
+  #High Demand
+  geom_point(aes(x = Q_High_Gallons, y = Price_Dollars, color = "High"), size = 3, alpha = 0.5) +
+  geom_smooth(aes(x = Q_High_Gallons, y = Price_Dollars, color = "High"), method = "lm", se = F)+
+  labs(x = "Quantity gas (Gallons)", y = "Marginal cost ($/gal)")+
+  theme_light()
+
+# Save intercepts
+int_low <- D_low_lm$coefficients[[1]]
+m_low <- D_low_lm$coefficients[[2]]
+
+int_high <- D_high_lm$coefficients[[1]]
+m_high <- D_high_lm$coefficients[[2]]
+
+```
+
+Data points are fit with a linear model to create the following estimates of demand curves by income group:
+
+
+D~low~ = `r round(m_low,6)`Q + `r round(int_low,1)`
+
+D~high~ = `r round(m_high,6)`Q + `r round(int_high,1)`
+
+
+Aggregate demand curve is created by horizontally summing individual demand curves. This is done by solving each equation for Q, adding both equations together, and re-solving for P. The resulting equation is valid for the range of prices where both high and low consumers have demand. The aggregate demand equals the demand for the high demand consumer group at prices where only the high demand consumer group has demand: 
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Solve for intercepts for aggregate demand
+m_agg <- 1/(1/(m_low)+1/(m_high))
+int_agg <- ((int_low/m_low)+(int_high/m_high))/(1/(m_low)+1/(m_high))
+
+# Create functions for all three demand curves
+D_low <- function(Q) {m_low*Q + int_low}
+D_high <- function(Q) {m_high*Q + int_high}
+D_agg <- function(Q) {m_agg*Q + int_agg}
+```
+
+
+D~agg~ , P < `r round(int_low,1)` = `r round(m_agg,6)`Q + `r round(int_agg,1)`
+
+D~agg~ , P > `r round(int_low,1)` = `r round(m_high,6)`Q + `r round(int_high,1)`
+
+## Supply Curve
+
+We are given that:
+
++ the current gas price (without any taxes) is \$3.00 per gallon, i.e. P~eq~ = \$3/gal
++ the marginal cost of producing a gallon of gasoline is linear
++ MC has a price-intercept of 0, i.e. at Q = 0 gal, P = \$0/gal
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Solve for Q eq given P = 3:
+P_eq <- 3
+Q_eq <- (P_eq-int_agg)/m_agg
+
+# Save slope of supply curve:
+m_MC <- P_eq/Q_eq
+
+# Create function for supply curve
+MC <- function(Q) {m_MC*Q}
+```
+
+Solve for Q~eq~ by solving for Q, given D~agg~ = \$3/gal:
+
+Q~eq~ = `r round(Q_eq,0)` gallons of gasoline
+
+Solve for slope: (rise/run) = (P~eq~ - 0)/(Q~eq~ - 0) = `r round(m_MC,6)`
+
+MC = `r round(m_MC,6)`Q
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+# Graph for reference
+ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
+  stat_function(fun = D_agg, aes(color = "Aggregate")) +
+  stat_function(fun = D_low, aes(color = "Low")) +
+  stat_function(fun = D_high, aes(color = "High")) +
+  stat_function(fun = MC, aes(color = "Supply")) +
+  scale_x_continuous(name = "Q (Gallons)") +
+  scale_y_continuous(name = "P ($/gal)",limits = c(0, NA)) +
+  labs(color = "Consumer Group") +
+  theme_minimal()
+  
+```
+
+
+
 
