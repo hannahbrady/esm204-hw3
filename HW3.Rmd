@@ -7,4 +7,35 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(ggpubr)
+library(broom)
+library(knitr)
 ```
+
+
+# Part 1
+
+*One gallon of gasoline emits 19.6 pounds of CO^2^. Assuming that the interim Social COst of Carbon (SCC) correctly reflects the total social cost of one metric ton of CO^2^, what is the marginal externality cost (MEC) per gallon of gas?*
+
+The Biden Administration's "interim" value of the SCC is $51 per metric ton of CO2.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+# Calculate and save MEC of one gallon of gas
+
+# MEC = ($/ metric ton) * (metric tons/lb) * (lb/gal)
+
+MEC <- 51*(1/2204.62)*(19.6)
+
+```
+
+The MEC can be calculated as follows:
+
+MEC~gal~ = \$51/metric ton CO~2~ * (1 ton/ 2204.64 lbs) * (19.6 lb CO~2~/gal of gas) = \$`r round(MEC,2)` per gallon of gas
+
+# Part 2
+
+*What is the aggregate daily demand curve for gasoline? What is the supply curve for gasoline? What is the \"benefit" to consumers under the status quo? What is the \"benefit" to producers under the status quo? What is the environmental cost under the status quo?*
+
