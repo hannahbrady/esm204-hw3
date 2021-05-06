@@ -135,6 +135,8 @@ ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
   stat_function(fun = D_low, aes(color = "Low Demand")) +
   stat_function(fun = D_high, aes(color = "High Demand")) +
   stat_function(fun = MC, aes(color = "Supply")) +
+  geom_segment(aes(x = 0, y = P_eq, xend = Q_eq, yend = P_eq, color = "Equilibrium"), linetype = 2)+
+  geom_segment(aes(x = Q_eq, y = 0, xend = Q_eq, yend = P_eq, color = "Equilibrium"), linetype = 2)+
   scale_x_continuous(name = "Q (Gallons)") +
   scale_y_continuous(name = "P ($/gal)",limits = c(0, NA)) +
   labs(color = "Curve") +
@@ -179,7 +181,52 @@ Under the status quo, the total environmental cost is equal to:
 
 Total Environmental Cost = MEC~gal~ (from Part 1) * Total gallons of gas consumed by society (Q~eq~) = \$`r round(MEC,2)`/gal * `r round(Q_eq,0)` gal of gas = \$`r round(MEC*Q_eq,2)`
 
+# Part 3
+
+*How is the current consumer benefit divided between "high" and "low" income consumers?*
+
+Use the demand curves for the high and low demand to solve for the quantities for each consumer group given the equilibrium price of \$3/gal gas:
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+# Low demand:
+Q_eq_low <- (P_eq-int_low)/m_low
+
+# High demand:
+Q_eq_high <- (P_eq-int_high)/m_high
+
+```
+
++ Q~[eq low]~ = `r round(Q_eq_low,0)` gallons of gas purchased by low demand consumers
+
++ Q~[eq high]~ = `r round(Q_eq_high,0)` gallons of gas purchased by high demand consumers
+
+Calculate benefit to each consumer group by integrating under the demand curve from 0 to Q~[eq of group]~ and then subtracting value of P~eq~*Q~[eq of group]~:
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+# Low demand
+CS_low_1 <- integrate(D_low, lower = 0, upper = Q_eq_low)
+CS_low_total <- CS_low_1$value - P_eq*Q_eq_low
+
+# High demand
+CS_high_1 <- integrate(D_high, lower = 0, upper = Q_eq_high)
+CS_high_total <- CS_high_1$value - P_eq*Q_eq_high
+
+```
+
++ Consumer surplus of low demand group = \$`r round(CS_low_total,0)`
+
++ Consumer surplus of high demand group = \$`r round(CS_high_total,0)`
 
 
+# Part 4 
 
+*Derive the optimal gas tax (in \$ per gallon of gasoline) using the interim SCC. Noting that recent research has shown the poor face a disproportionate share of the impacts from climate change, assume that the climate externality is borne entirely by the "low" income group. What would be the effects of this tax on:*
 
+(a) The amount of gasoline produced and consumed
+(b) The price of gasoline
+(c) Overall welfare of "high" income consumers
+(d) Overall welfare of "low" income consumers
+(e) Gas producers
+(f) Total environmental damage
+(g) Total tax revenue generated
