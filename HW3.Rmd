@@ -364,17 +364,173 @@ Total environmental damage is the MEC curve evaluated at the new socially optimu
 TED <- MEC*MSC_Q_eq
 ```
 
-TED= `r round(MEC, 2)`*Q when Q= `r round(MSC_Q_eq, 2)`
+TED= `r round(MEC, 2)`*Q when Q= `r round(MSC_Q_eq, 2)` gallons
 
 TED= \$`r round(TED,2)`
 
 #### g. Total tax revenue generated
 
-Tax revenue is found by multiplying the MEC= `r round(MEC, 2)` by the quantity consumed Q=`r round(MSC_Q_eq,2)`
+Tax revenue is found by multiplying the MEC=\$ `r round(MEC, 2)` per gallon by the quantity consumed Q=`r round(MSC_Q_eq,2)`gallons
 
-ax Revenue = \$ `r round(TED,2)` 
+Tax Revenue = \$ `r round(TED,2)` 
+
+# Part 5
+
+*Now, assume that all revenue from the gas tax will be redistributed to the consumers in proportion to their pre-tax consumption of gas. For example, if 80% of the gas was consumed by “high” income consumers, then they get 80% of the tax revenue. Additionally, consider the fact that current scientific evidence suggests the true SCC may be much higher than $51. For a range of SCC values ($51, $75, $100, $125, and $150 per metric ton of CO2), calculate the effects of an SCC-based gasoline tax on:*
+
+Taxes are redistributed proportional to origainal consumption of gas between high and low income groups at the free market equilibrium price.
+
+Proportion= Q~group~/Q~total~
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#Proportion of "high"
+prop_high <- Q_eq_high/Q_eq
+pct_high <- 100*prop_high
+
+#Proportion of "low"
+prop_low <- Q_eq_low/Q_eq
+pct_low <- 100*prop_low
+```
++ Percentage Consumed~low~ = `r round(pct_low,0)`%
+
++ Percentage Consumed~high~ = `r round(pct_high, 0)`%
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#MEC of one gallon of gas at different SCC
+# MEC = ($/ metric ton) * (metric tons/lb) * (lb/gal)
+
+# $75 SCC
+MEC_75 <- 75*(1/2204.62)*(19.6)
+
+# $100
+MEC_100 <- 100*(1/2204.62)*(19.6)
+
+# $125
+MEC_125 <- 125*(1/2204.62)*(19.6)
+
+#150
+MEC_150 <- 150*(1/2204.62)*(19.6)
+
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#Find the socially optimum equilibrium price and and quantity
+
+# $75 SCC
+MSC_75_Q_eq <- (MEC_75-int_agg)/(m_agg-m_MC)
+MSC_75_P_eq <- (m_MC*MSC_75_Q_eq+ MEC_75)
+
+# $100
+MSC_100_Q_eq <- (MEC_100-int_agg)/(m_agg-m_MC)
+MSC_100_P_eq <- (m_MC*MSC_100_Q_eq+ MEC_100)
+
+# $125
+MSC_125_Q_eq <- (MEC_125-int_agg)/(m_agg-m_MC)
+MSC_125_P_eq <- (m_MC*MSC_125_Q_eq+ MEC_125)
+
+# $150
+MSC_150_Q_eq <- (MEC_150-int_agg)/(m_agg-m_MC)
+MSC_150_P_eq <- (m_MC*MSC_150_Q_eq+ MEC_150)
+
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#Find the tax revenue generated from each SCC tax level 
+# Tax revenue =(gallons of gas)*(MEC)
+#Determine proportion returned to two income groups
+
+# $51
+#tax rev
+tax_rev_51= TED
+#tax return
+tr_51_low=tax_rev_51*prop_low
+tr_51_high=tax_rev_51*prop_high
+
+# $75
+#tax revenue
+tax_rev_75=MSC_75_Q_eq*MEC_75
+#tax return
+tr_75_low=tax_rev_75*prop_low
+tr_75_high=tax_rev_75*prop_high
+
+# $100
+# tax revenue
+tax_rev_100=MSC_100_Q_eq*MEC_100
+# tax return
+tr_100_low=tax_rev_100*prop_low
+tr_100_high=tax_rev_100*prop_high
+
+# $125
+#tax revenue
+tax_rev_125=MSC_125_Q_eq*MEC_125
+#tax return
+tr_125_low=tax_rev_125*prop_low
+tr_125_high=tax_rev_125*prop_high
+
+# $150
+#tax revenue
+tax_rev_150=MSC_150_Q_eq*MEC_150
+#tax return
+tr_150_low=tax_rev_150*prop_low
+tr_150_high=tax_rev_150*prop_high
+```
 
 
+#### a. Overall welfare of “high” income consumers
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#Determine quantity purchased at new socially optimal equilibrium 
+# $75
+MSC_75_Q_eq_high= (MSC_75_P_eq-int_high)/(m_high)
+
+# $100
+MSC_100_Q_eq_high= (MSC_100_P_eq-int_high)/(m_high)
+
+# $125
+MSC_125_Q_eq_high= (MSC_125_P_eq-int_high)/(m_high)
+
+# $150
+MSC_150_Q_eq_high= (MSC_150_P_eq-int_high)/(m_high)
+
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#Determine total welfare by finding the total consumer surplus to the group, subtracting the cost of gas, and adding the amount of tax returned to the group
+
+#Consumer surplus: Integrate under the demand curve from 0 to the new quantity purchased at the socially optimum price found above
+#Remove the cost to purchase the gas and the add the proportional amount of tax returned
+
+# $51
+CS_high_MSC_tax <- integrate(D_high, lower = 0, upper = MSC_Q_eq_high)
+wf_high_MSC <- CS_high_MSC$value - MSC_P_eq*MSC_Q_eq_high + tr_51_high
+
+# $75
+CS_high_MSC_75 <- integrate(D_high, lower = 0, upper = MSC_75_Q_eq_high)
+wf_high_MSC_75<- CS_high_MSC_75$value - (MSC_75_P_eq*MSC_75_Q_eq_high) +tr_75_high
+
+# $100
+CS_high_MSC_100 <- integrate(D_high, lower = 0, upper = MSC_100_Q_eq_high)
+wf_high_MSC_100<- CS_high_MSC_100$value - (MSC_100_P_eq*MSC_100_Q_eq_high)+ tr_100_high
+
+# $125
+CS_high_MSC_125 <- integrate(D_high, lower = 0, upper = MSC_125_Q_eq_high)
+wf_high_MSC_125<- CS_high_MSC_125$value - (MSC_125_P_eq*MSC_125_Q_eq_high) + tr_125_high
+
+# $150
+CS_high_MSC_150 <- integrate(D_high, lower = 0, upper = MSC_150_Q_eq_high)
+wf_high_MSC_150 <- CS_high_MSC_150$value - (MSC_150_P_eq*MSC_150_Q_eq_high) + tr_150_high
+```
+Welfare~$51~= \$`r round(wf_high_MSC, 2)`
+
+Welfare~$75~= \$`r round(wf_high_MSC_75, 2)`
+
+Welfare~$100~= \$`r round(wf_high_MSC_100, 2)`
+
+Welfare~$125~= \$`r round(wf_high_MSC_125, 2)`
+
+Welfare~$150~= \$`r round(wf_high_MSC_150, 2)`
+
+#### b. Overall welfare of “low” income consumers
+#### c. Gas producers
 
 
 
