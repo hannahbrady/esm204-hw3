@@ -388,7 +388,7 @@ Tax Revenue = \$ `r round(TED,2)`
 
 *Now, assume that all revenue from the gas tax will be redistributed to the consumers in proportion to their pre-tax consumption of gas. For example, if 80% of the gas was consumed by “high” income consumers, then they get 80% of the tax revenue. Additionally, consider the fact that current scientific evidence suggests the true SCC may be much higher than $51. For a range of SCC values ($51, $75, $100, $125, and $150 per metric ton of CO2), calculate the effects of an SCC-based gasoline tax on:*
 
-Taxes are redistributed proportional to origainal consumption of gas between high and low income groups at the free market equilibrium price.
+Taxes are redistributed proportional to original consumption of gas between high and low income groups at the free market equilibrium price.
 
 Proportion= Q~group~/Q~total~
 
