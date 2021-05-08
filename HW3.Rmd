@@ -224,7 +224,9 @@ CS_high_total <- CS_high_1$value - P_eq*Q_eq_high
 *Derive the optimal gas tax (in \$ per gallon of gasoline) using the interim SCC. Noting that recent research has shown the poor face a disproportionate share of the impacts from climate change, assume that the climate externality is borne entirely by the "low" income group. What would be the effects of this tax on:*
 
 
-The tax would be equal to the marginal external cost (MEC)
+The optimal gas tax would be equal to the marginal external cost (MEC) from Part 1:
+
+
 MEC = $`r round(MEC,2)` per gallon of gas
 
 
@@ -232,7 +234,7 @@ MEC = $`r round(MEC,2)` per gallon of gas
 
 Find the marginal social cost of gasoline by vertically aggregating the marginal supply curve and the marginal external cost curves
 
-    MSC =  = `r round(m_MC,6)`Q + `r round(MEC,2)`
+    MSC  = `r round(m_MC,6)`Q + `r round(MEC,2)`
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Total Social Cost:
@@ -240,7 +242,7 @@ MSC <- function(Q){m_MC*Q + MEC}
 
 #Graph for reference
 ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
-  stat_function(fun = MC, aes(color = "Maringal Cost")) +
+  stat_function(fun = MC, aes(color = "Marginal Private Cost")) +
   stat_function(fun= MSC, aes(color = "Marginal Social Cost"))+
   stat_function(fun = D_agg, aes(color = "Agg Demand")) +
   scale_x_continuous(name = "Q (Gallons)") +
@@ -255,7 +257,7 @@ ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
 #Find new equilibrium quantity
 MSC_Q_eq <- (MEC-int_agg)/(m_agg-m_MC)
 ``` 
-    Socially optimum equilibrium quantity of `r round(MSC_Q_eq,1)` gallons of gas
+    The tax results in a socially optimum equilibrium quantity of `r round(MSC_Q_eq,1)` gallons of gas produced and consumed.
 
 #### b. The price of gasoline
 
@@ -263,14 +265,15 @@ MSC_Q_eq <- (MEC-int_agg)/(m_agg-m_MC)
 #Use the new equilibrium quantity to find the price
 MSC_P_eq <- (m_MC*MSC_Q_eq+ MEC)
 ```
-  
-  Price= \$ `r round(MSC_P_eq,1)` 
+The new price of gasoline is found by solving the marginal social cost curve for P~eq~ given the new equilibrium quantity calculated in Part 4.b above:
+
+  Price~[socially optimal]~ = `r round(m_MC,6)`*`r round(MSC_Q_eq,1)` + `r round(MEC,2)`= \$ `r round(MSC_P_eq,2)` 
 
 #### c. Overall welfare of "high" income consumers
 
 + Calculate the welfare of "high" income consumer by determining the consumer surplus at the new equilibrium and subtracting the cost of purchasing gas
 
-+ Solve P =`r round(m_high,6)`Q+ `r round(int_high,2)` at the new socially optimum equilibrium price `r round(MSC_P_eq, 2)`
++ Solve D~high~ = `r round(m_high,6)`Q + `r round(int_high,2)` at the new socially optimum equilibrium price \$`r round(MSC_P_eq, 2)`/gal
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #Quantity purchased at new socially optimal equilibrium 
@@ -281,11 +284,11 @@ CS_high_MSC <- integrate(D_high, lower = 0, upper = MSC_Q_eq_high)
 CS_high_MSC_total <- CS_high_MSC$value - MSC_P_eq*MSC_Q_eq_high
 ```
 
-    Q= `r round(MSC_Q_eq_high, 2)` gallons
+    Q~[SO high]~ = `r round(MSC_Q_eq_high, 2)` gallons
 
-+ Integrate "high" demand curve (`r round(m_high, 6)`Q + `r round(int_high, 2)`) from 0 to `r round(MSC_Q_eq_high, 2)` then subtract the cost of purchasing gas (`r round(MSC_P_eq, 2)`*`r round(MSC_Q_eq_high, 2)`
++ Integrate "high" demand curve (`r round(m_high, 6)`Q + `r round(int_high, 2)`) from 0 to `r round(MSC_Q_eq_high, 2)` then subtract the cost of purchasing gas (\$`r round(MSC_P_eq, 2)`/gal*`r round(MSC_Q_eq_high, 2)` gal)
 
-    Welfare = \$`r round(CS_high_MSC_total,1)` 
+    Welfare~[SO high]~ = \$`r round(CS_high_MSC_total,1)` 
 
 #### d. Overall welfare of "low" income consumers
 
@@ -298,6 +301,8 @@ MSC_Q_eq_low= (MSC_P_eq-int_low)/(m_low)
 # consumer surplus
 CS_low_MSC <- integrate(D_low, lower = 0, upper = MSC_Q_eq_low)
 CS_low_MSC_total <- CS_low_MSC$value - MSC_P_eq*MSC_Q_eq_low
+
+#Comment: HRB - maybe we don't need DWL and we just subtract the env damage from the CS_low?
 
 ##Find the DWL
 #Integrate the MSC from the socially optimal equilibrium to the BAU equilibrium. 
@@ -315,22 +320,22 @@ DWL <- (MSC_area$value)-(D_agg_area$value)
 MSC_welfare_low <- (CS_low_MSC_total-DWL)
 ```
 
-+ Solve P =`r round(m_low,6)`Q+ `r round(int_low,2)` at the new socially optimum equilibrium price `r round(MSC_P_eq, 2)`
++ Solve D~low~ = `r round(m_low,6)`Q + `r round(int_low,2)` at the new socially optimum equilibrium price \$`r round(MSC_P_eq, 2)`/gal
 
-    Q= `r round(MSC_Q_eq_low, 2)`gallons
+    Q = `r round(MSC_Q_eq_low, 2)`gallons
 
-+ Integrate "low" demand curve (`r round(m_low, 6)`Q + `r round(int_low, 2)`) from 0 to `r round(MSC_Q_eq_low, 2)` then subtract the cost of purchasing gas (`r round(MSC_P_eq,2)`*`r round(MSC_Q_eq_low, 2)`
++ Integrate "low" demand curve (`r round(m_low, 6)`Q + `r round(int_low, 2)`) from 0 to `r round(MSC_Q_eq_low, 2)` then subtract the cost of purchasing gas (\$`r round(MSC_P_eq,2)`/gal*`r round(MSC_Q_eq_low, 2)` gal)
 
-    Consumer Surplus= \$`r round(CS_low_MSC_total,2)`
+    Consumer Surplus = \$`r round(CS_low_MSC_total,2)`
  
 + Find the dead weight loss (DWL) by integrating the MSC (`r round(m_MC,6)`Q +` r round (MEC, 2)`) and the aggregate demand curve (from `r round(m_agg, 6)`Q +`r round(int_agg,2)`) between `r round(MSC_Q_eq,1)` and `r round(Q_eq,2)`. 
 
-    DWL= \$ `r round(DWL,2)`
+    DWL = \$ `r round(DWL,2)`
 
 + Subtract the DWL from the consumer surplus to find the total welfare of the "low" income group
 
 
-    Welfare= \$`r round(MSC_welfare_low,2)`
+    Welfare = \$`r round(MSC_welfare_low,2)`
 
 #### e. Gas producers
 
@@ -346,11 +351,11 @@ cost <- integrate (MC, lower = 0, upper = MSC_Q_eq)
 revenue <- income - cost$value
 ```
 
-Find the welfare of the producers by finding the total income of generate at the socially optimal equilibrium and subtracting the cost of production. 
+Find the welfare of the producers by finding the total income generated at the socially optimal equilibrium and subtracting the cost of production. 
 
-+ Income = P*Q
-+ Cost: Integrate `r round(m_MC, 6)`Q from 0 to `MEC_Q_eq`
-+ Welfare: Income-Cost
++ Income = P~SO~*Q~SO~
++ Cost: Integrate MPC curve (`r round(m_MC, 6)`Q) from 0 to Q~SO~ (`MSC_Q_eq` gal)
++ Welfare: Income - Cost
 
 Welfare = \$ `r round(revenue, 2)`
 
@@ -364,17 +369,15 @@ Total environmental damage is the MEC curve evaluated at the new socially optimu
 TED <- MEC*MSC_Q_eq
 ```
 
-TED= `r round(MEC, 2)`*Q when Q= `r round(MSC_Q_eq, 2)`
+TED = `r round(MEC, 2)`*Q, Q~SO~ = `r round(MSC_Q_eq, 2)`
 
-TED= \$`r round(TED,2)`
+TED = \$`r round(TED,2)`
 
 #### g. Total tax revenue generated
 
-Tax revenue is found by multiplying the MEC= `r round(MEC, 2)` by the quantity consumed Q=`r round(MSC_Q_eq,2)`
+Tax revenue is found by multiplying the cost of the tax, the MEC (\$`r round(MEC, 2)`/gal) by the quantity consumed Q~SO~ =`r round(MSC_Q_eq,2)`
 
-ax Revenue = \$ `r round(TED,2)` 
-
-
+Tax Revenue = \$ `r round(TED,2)` 
 
 
 
