@@ -292,7 +292,13 @@ CS_high_MSC_total <- CS_high_MSC$value - MSC_P_eq*MSC_Q_eq_high
 
 #### d. Overall welfare of "low" income consumers
 
-Calculate the welfare to the low income group by determining the consumer surplus at the new equilibrium and subtracting the cost of purchasing gas and the deadweight loss created by shifting from the BAU scenario to the socially optimal equilibrium 
+Calculate the welfare to the low income group by determining the consumer surplus at the new equilibrium and subtracting the cost of purchasing gas and total environmental cost of consuming gas at the new socially optimal equilibrium
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#MEC*quantity of gas consumed
+
+TED <- MEC*MSC_Q_eq
+```
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #Quantity purchased at new socially optimal equilibrium 
@@ -311,31 +317,21 @@ MSC_area <- integrate(MSC, lower = MSC_Q_eq, upper = Q_eq)
 #Integrate the aggregate demand curve from the socially optimal equilibrium to the BAU equilibrium 
 D_agg_area <- integrate(D_agg, lower = MSC_Q_eq, upper = Q_eq)
 
-#find DWL
-DWL <- (MSC_area$value)-(D_agg_area$value)
 
 ## Calculate total welfare 
 #Subtract the DWL from the consumer surplus identified above
 
-MSC_welfare_low <- (CS_low_MSC_total-DWL)
+MSC_welfare_low <- (CS_low_MSC_total-TED)
 ```
 
 + Solve D~low~ = `r round(m_low,6)`Q + `r round(int_low,2)` at the new socially optimum equilibrium price \$`r round(MSC_P_eq, 2)`/gal
 
-    Q = `r round(MSC_Q_eq_low, 2)`gallons
+    Q~SO~ = `r round(MSC_Q_eq_low, 2)`gallons
 
 + Integrate "low" demand curve (`r round(m_low, 6)`Q + `r round(int_low, 2)`) from 0 to `r round(MSC_Q_eq_low, 2)` then subtract the cost of purchasing gas (\$`r round(MSC_P_eq,2)`/gal*`r round(MSC_Q_eq_low, 2)` gal)
 
     Consumer Surplus = \$`r round(CS_low_MSC_total,2)`
  
-+ Find the dead weight loss (DWL) by integrating the MSC (`r round(m_MC,6)`Q +` r round (MEC, 2)`) and the aggregate demand curve (from `r round(m_agg, 6)`Q +`r round(int_agg,2)`) between `r round(MSC_Q_eq,1)` and `r round(Q_eq,2)`. 
-
-    DWL = \$ `r round(DWL,2)`
-
-+ Subtract the DWL from the consumer surplus to find the total welfare of the "low" income group
-
-
-    Welfare = \$`r round(MSC_welfare_low,2)`
 
 #### e. Gas producers
 
@@ -363,26 +359,16 @@ Welfare = \$ `r round(revenue, 2)`
 
 Total environmental damage is the MEC curve evaluated at the new socially optimum equilibrium 
 
-```{r echo = FALSE, message = FALSE, warning = FALSE}
-#MEC*quantity of gas consumed
 
-TED <- MEC*MSC_Q_eq
-```
-
-<<<<<<< HEAD
-TED= `r round(MEC, 2)`*Q when Q= `r round(MSC_Q_eq, 2)` gallons
-=======
-TED = `r round(MEC, 2)`*Q, Q~SO~ = `r round(MSC_Q_eq, 2)`
->>>>>>> f59e5ad941be654de65d06e70ae56c72af4de8ce
 
 TED = \$`r round(TED,2)`
 
 #### g. Total tax revenue generated
 
-<<<<<<< HEAD
-Tax revenue is found by multiplying the MEC=\$ `r round(MEC, 2)` per gallon by the quantity consumed Q=`r round(MSC_Q_eq,2)`gallons
 
-Tax Revenue = \$ `r round(TED,2)` 
+Tax revenue is found by multiplying the MEC (\$ `r round(MEC, 2)`per gallon) by the quantity consumed Q~SO~ (`r round(MSC_Q_eq,2)`)gallons
+
+Tax Revenue= \$ `r round(TED,2)` 
 
 # Part 5
 
@@ -401,12 +387,12 @@ pct_high <- 100*prop_high
 prop_low <- Q_eq_low/Q_eq
 pct_low <- 100*prop_low
 ```
-+ Percentage Consumed~low~ = `r round(pct_low,0)`%
++ Percentage Consumed~low~= `r round(pct_low,0)`%
 
-+ Percentage Consumed~high~ = `r round(pct_high, 0)`%
++ Percentage Consumed~high~= `r round(pct_high, 0)`%
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-#MEC of one gallon of gas at different SCC
+#MEC of one gallon of gas given multiple SCC values
 # MEC = ($/ metric ton) * (metric tons/lb) * (lb/gal)
 
 # $75 SCC
@@ -540,12 +526,105 @@ Welfare~$125~= \$`r round(wf_high_MSC_125, 2)`
 Welfare~$150~= \$`r round(wf_high_MSC_150, 2)`
 
 #### b. Overall welfare of “low” income consumers
-#### c. Gas producers
-=======
-Tax revenue is found by multiplying the cost of the tax, the MEC (\$`r round(MEC, 2)`/gal) by the quantity consumed Q~SO~ =`r round(MSC_Q_eq,2)`
 
-Tax Revenue = \$ `r round(TED,2)` 
->>>>>>> f59e5ad941be654de65d06e70ae56c72af4de8ce
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#Determine quantity purchased at new socially optimal equilibrium
+
+# $75
+MSC_75_Q_eq_low= (MSC_75_P_eq-int_low)/(m_low)
+
+# $100
+MSC_100_Q_eq_low= (MSC_100_P_eq-int_low)/(m_low)
+
+# $125
+MSC_125_Q_eq_low= (MSC_125_P_eq-int_low)/(m_low)
+
+# $150
+MSC_150_Q_eq_low= (MSC_150_P_eq-int_low)/(m_low)
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Determine total welfare by finding the total consumer surplus to the group, subtracting the cost of gas, and adding the amount of tax returned to the group
+
+#Consumer surplus: Integrate under the demand curve from 0 to the new quantity purchased at the socially optimum price found above
+
+#Remove the cost to purchase the gas, the cost of the environmental damage, and the add the proportional amount of tax returned to the income group
+
+# $51
+CS_low_MSC_tax <- integrate(D_low, lower = 0, upper = MSC_Q_eq_low)
+wf_low_MSC <- CS_low_MSC$value - (MSC_P_eq*MSC_Q_eq_low) + tr_51_low -tax_rev_51
+
+# $75
+CS_low_MSC_75 <- integrate(D_low, lower = 0, upper = MSC_75_Q_eq_low)
+wf_low_MSC_75<- CS_low_MSC_75$value - (MSC_75_P_eq*MSC_75_Q_eq_low) +tr_75_low -tax_rev_75
+
+# $100
+CS_low_MSC_100 <- integrate(D_low, lower = 0, upper = MSC_100_Q_eq_low)
+wf_low_MSC_100<- CS_low_MSC_100$value - (MSC_100_P_eq*MSC_100_Q_eq_low)+ tr_100_low -tax_rev_100
+
+# $125
+CS_low_MSC_125 <- integrate(D_low, lower = 0, upper = MSC_125_Q_eq_low)
+wf_low_MSC_125<- CS_low_MSC_125$value - (MSC_125_P_eq*MSC_125_Q_eq_low) + tr_125_low -tax_rev_125
+
+# $150
+CS_low_MSC_150 <- integrate(D_low, lower = 0, upper = MSC_150_Q_eq_low)
+wf_low_MSC_150 <- CS_low_MSC_150$value - (MSC_150_P_eq*MSC_150_Q_eq_low) + tr_150_low -tax_rev_150
+
+```
+Welfare~$51~= \$`r round(wf_low_MSC, 2)`
+
+Welfare~$75~= \$`r round(wf_low_MSC_75, 2)`
+
+Welfare~$100~= \$`r round(wf_low_MSC_100, 2)`
+
+Welfare~$125~= \$`r round(wf_low_MSC_125, 2)`
+
+Welfare~$150~= \$`r round(wf_high_MSC_150, 2)`
+
+#### c. Gas producers
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Amount of gas sold 
+# income=P($/gal)*Q(gals)
+income <- MSC_P_eq*MSC_Q_eq
+
+#Cost of production
+#Area under the mc curve from 0 to the quantity produced, Q (gal)
+cost <- integrate (MC, lower = 0, upper = MSC_Q_eq)
+
+#Revenue
+#Income-cost of production
+revenue <- income - cost$value
+
+# $51
+income_51 <- MSC_P_eq*MSC_Q_eq
+cost_51 <- integrate (MC, lower=0, upper = MSC_Q_eq)
+revenue_51 <- income_51 - cost_51$value
+
+# $75
+income_75 <- MSC_P_eq*MSC_75_Q_eq
+cost_75 <- integrate (MC, lower=0, upper = MSC_75_Q_eq)
+revenue_75 <- income_75 - cost_75$value
+
+# $100
+income_100 <- MSC_P_eq*MSC_100_Q_eq
+cost_100 <- integrate (MC, lower=0, upper = MSC_100_Q_eq)
+revenue_100 <- income_100 - cost_100$value
+
+# $125
+income_125 <- MSC_P_eq*MSC_125_Q_eq
+cost_125 <- integrate (MC, lower=0, upper = MSC_125_Q_eq)
+revenue_125 <- income_125 - cost_125$value
+
+# $150
+income_150 <- MSC_P_eq*MSC_150_Q_eq
+cost_150 <- integrate (MC, lower=0, upper = MSC_150_Q_eq)
+revenue_150 <- income_150 - cost_150$value
+
+```
+
+
 
 
 
