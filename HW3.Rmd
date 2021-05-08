@@ -12,6 +12,7 @@ library(here)
 library(ggpubr)
 library(broom)
 library(knitr)
+library(kableExtra)
 options(scipen=999)
 ```
 
@@ -545,7 +546,7 @@ MSC_150_Q_eq_low= (MSC_150_P_eq-int_low)/(m_low)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-#Determine total welfare by finding the total consumer surplus to the group, subtracting the cost of gas, and adding the amount of tax returned to the group
+#Determine total welfare by finding the total consumer surplus to the group, subtracting the cost of gas and environmental damages, and adding the amount of tax returned to the group
 
 #Consumer surplus: Integrate under the demand curve from 0 to the new quantity purchased at the socially optimum price found above
 
@@ -624,8 +625,126 @@ revenue_150 <- income_150 - cost_150$value
 
 ```
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
+# Graph for reference
+ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
+  stat_function(fun = D_agg, aes(color = "Aggregate Demand")) +
+  stat_function(fun = D_low, aes(color = "Low Demand")) +
+  stat_function(fun = D_high, aes(color = "High Demand")) +
+  stat_function(fun = MC, aes(color = "Marginal Cost")) +
+  geom_segment(aes(x = 0, y = P_eq, xend = Q_eq, yend = P_eq, color = "Equilibrium Pre-Tax"), linetype = 2)+
+  geom_segment(aes(x = Q_eq, y = 0, xend = Q_eq, yend = P_eq, color = "Equilibrium Pre-Tax"), linetype = 2)+
+  stat_function(fun = MSC, aes(color = "MSC - 51")) +
+  geom_segment(aes(x = 0, y = MSC_P_eq, xend = MSC_Q_eq, yend = MSC_P_eq, color = "MSC - 51"), linetype = 2)+
+  geom_segment(aes(x = MSC_Q_eq, y = 0, xend = MSC_Q_eq, yend = MSC_P_eq, color = "MSC - 51"), linetype = 2)+
+  geom_segment(aes(x = 0, y = MEC, xend = MSC_Q_eq, yend = MEC, color = "MSC - 51"), linetype = 2)+
+# SCC = 75
+  geom_segment(aes(x = 0, y = MSC_75_P_eq, xend = MSC_75_Q_eq, yend = MSC_75_P_eq, color = "MSC - 75"), linetype = 2)+
+  geom_segment(aes(x = MSC_75_Q_eq, y = 0, xend = MSC_75_Q_eq, yend = MSC_75_P_eq, color = "MSC - 75"), linetype = 2)+
+  geom_segment(aes(x = 0, y = MEC_75, xend = MSC_75_Q_eq, yend = MEC_75, color = "MSC - 75"), linetype = 2)+
+# SCC = 100
+  geom_segment(aes(x = 0, y = MSC_100_P_eq, xend = MSC_100_Q_eq, yend = MSC_100_P_eq, color = "MSC - 100"), linetype = 2)+
+  geom_segment(aes(x = MSC_100_Q_eq, y = 0, xend = MSC_100_Q_eq, yend = MSC_100_P_eq, color = "MSC - 100"), linetype = 2)+
+  geom_segment(aes(x = 0, y = MEC_100, xend = MSC_100_Q_eq, yend = MEC_100, color = "MSC - 100"), linetype = 2)+
+# SCC = 125
+  geom_segment(aes(x = 0, y = MSC_125_P_eq, xend = MSC_125_Q_eq, yend = MSC_125_P_eq, color = "MSC - 125"), linetype = 2)+
+  geom_segment(aes(x = MSC_125_Q_eq, y = 0, xend = MSC_125_Q_eq, yend = MSC_125_P_eq, color = "MSC - 125"), linetype = 2)+
+  geom_segment(aes(x = 0, y = MEC_125, xend = MSC_125_Q_eq, yend = MEC_125, color = "MSC - 125"), linetype = 2)+
+# SCC = 150
+  geom_segment(aes(x = 0, y = MSC_150_P_eq, xend = MSC_150_Q_eq, yend = MSC_150_P_eq, color = "MSC - 150"), linetype = 2)+
+  geom_segment(aes(x = MSC_150_Q_eq, y = 0, xend = MSC_150_Q_eq, yend = MSC_150_P_eq, color = "MSC - 150"), linetype = 2)+
+  geom_segment(aes(x = 0, y = MEC_150, xend = MSC_150_Q_eq, yend = MEC_150, color = "MSC - 150"), linetype = 2)+
+  scale_x_continuous(name = "Q (Gallons)") +
+  scale_y_continuous(name = "P ($/gal)",limits = c(0, NA)) +
+  labs(color = "Curve") +
+  theme_minimal()
 
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#Let's make a table!
+
+# Column of SCC:
+SCC <- c(51, 75, 100, 125, 150)
+
+# Column of MEC at SCC:
+MEC_col <- c(MEC, MEC_75, MEC_100, MEC_125, MEC_150)
+
+# Column of Peq at SCC:
+Peq_col <- c(MSC_P_eq, MSC_75_P_eq, MSC_100_P_eq, MSC_125_P_eq, MSC_150_P_eq)
+
+# Column of Qeq at SCC:
+Qeq_col <- c(MSC_Q_eq, MSC_75_Q_eq, MSC_100_Q_eq, MSC_125_Q_eq, MSC_150_Q_eq)
+
+# Column of Q high
+Qeq_high_col <- c(MSC_Q_eq_high, MSC_75_Q_eq_high, MSC_100_Q_eq_high, MSC_125_Q_eq_high, MSC_150_Q_eq_high)
+
+# Column of Q low
+Qeq_low_col <- c(MSC_Q_eq_low, MSC_75_Q_eq_low, MSC_100_Q_eq_low, MSC_125_Q_eq_low, MSC_150_Q_eq_low)
+
+# Column of env burden
+TED_col <- c(tax_rev_51, tax_rev_75, tax_rev_100, tax_rev_125, tax_rev_150)
+
+# Column of welfare before tax distribution high
+wf_pre_tax_high_col <- c(CS_high_MSC$value - MSC_P_eq*MSC_Q_eq_high, 
+                     CS_high_MSC_75$value - (MSC_75_P_eq*MSC_75_Q_eq_high),
+                     CS_high_MSC_100$value - (MSC_100_P_eq*MSC_100_Q_eq_high),
+                     CS_high_MSC_125$value - (MSC_125_P_eq*MSC_125_Q_eq_high),
+                     CS_high_MSC_150$value - (MSC_150_P_eq*MSC_150_Q_eq_high))
+
+# Column of welfare before tax distribution and env burden low
+wf_pre_tax_low_col <- c(CS_low_MSC$value - MSC_P_eq*MSC_Q_eq_low, 
+                     CS_low_MSC_75$value - (MSC_75_P_eq*MSC_75_Q_eq_low),
+                     CS_low_MSC_100$value - (MSC_100_P_eq*MSC_100_Q_eq_low),
+                     CS_low_MSC_125$value - (MSC_125_P_eq*MSC_125_Q_eq_low),
+                     CS_low_MSC_150$value - (MSC_150_P_eq*MSC_150_Q_eq_low))
+
+# Column of welfare before tax distribution but including env burden low
+wf_pre_tax_low_burden_col <- c(CS_low_MSC$value - MSC_P_eq*MSC_Q_eq_low - tax_rev_51, 
+                     CS_low_MSC_75$value - (MSC_75_P_eq*MSC_75_Q_eq_low) - tax_rev_75,
+                     CS_low_MSC_100$value - (MSC_100_P_eq*MSC_100_Q_eq_low) - tax_rev_100,
+                     CS_low_MSC_125$value - (MSC_125_P_eq*MSC_125_Q_eq_low) - tax_rev_125,
+                     CS_low_MSC_150$value - (MSC_150_P_eq*MSC_150_Q_eq_low)- tax_rev_150)
+
+# column of tax revenue redistributed to high
+tr_high_col <- c(tr_51_high, tr_75_high, tr_100_high, tr_125_high, tr_150_high)
+
+# column of tax revenue redistributed to low
+tr_low_col <- c(tr_51_low, tr_75_low, tr_100_low, tr_125_low, tr_150_low)
+
+# Column of welfare after tax distribution high
+welfare_high_col <- c(wf_high_MSC, wf_high_MSC_75, wf_high_MSC_100, wf_high_MSC_125, wf_high_MSC_150)
+
+# Column of welfare after tax distribution low (includes env burden)
+welfare_low_col <- c(wf_low_MSC, wf_low_MSC_75, wf_low_MSC_100, wf_low_MSC_125, wf_low_MSC_150)
+
+# Column of gas producer welfare
+gas_rev_col <- c(revenue_51, revenue_75, revenue_100, revenue_125, revenue_150)
+
+# Table
+part_5_table <- data.frame(SCC = SCC, MEC = MEC_col, Peq = Peq_col, Qeq = Qeq_col, Qeq_high = Qeq_high_col, Qeq_low = Qeq_low_col, TED = TED_col,
+                           wf_pre_tax_high = wf_pre_tax_high_col,
+                           wf_pre_tax_low = wf_pre_tax_low_col,
+                           wf_pre_tax_low_burden = wf_pre_tax_low_burden_col,
+                           tr_high = tr_high_col, tr_low = tr_low_col,
+                           welfare_high = welfare_high_col, 
+                           welfare_low = welfare_low_col,
+                           gas_rev = gas_rev_col)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Create stylized table for report
+
+part_5_final <- part_5_table %>% 
+  select(SCC, TED, welfare_high, welfare_low, gas_rev)
+
+part_5_final %>% 
+  kable(digits = 0, format.args = list(big.mark = ","), 
+    caption = "Caption",
+    col.names = c("SCC", "Total Environmental Damage", "Welfare to high demanders", "Welfare to low demanders","Welfare to gas producers")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = TRUE)
+```
 
 
 
