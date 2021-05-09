@@ -19,7 +19,7 @@ options(scipen=999)
 
 # Part 1
 
-*One gallon of gasoline emits 19.6 pounds of CO^2^. Assuming that the interim Social COst of Carbon (SCC) correctly reflects the total social cost of one metric ton of CO^2^, what is the marginal externality cost (MEC) per gallon of gas?*
+*One gallon of gasoline emits 19.6 pounds of CO~2~. Assuming that the interim Social COst of Carbon (SCC) correctly reflects the total social cost of one metric ton of CO~2~, what is the marginal externality cost (MEC) per gallon of gas?*
 
 The Biden Administration's "interim" value of the SCC is $51 per metric ton of CO2.
 
@@ -170,9 +170,11 @@ SQ_PS_1 <- integrate(MC, lower = 0, upper = Q_eq)
 # Subtract from Qeq*Peq:
 SQ_PS_total <- Q_eq*P_eq - SQ_PS_1$value
 ```
+Consumer surplus is calculated by integrating under the aggregate demand curve from 0 to Q~eq~ and the subtracting the cost of gasoline (P~eq~*Q~eq~):
 
 Consumer surplus under status quo = \$`r round(SQ_CS_total,0)`.
 
+Producer surplus is calculated by integrating under the supply curve to calculate cost of producing gas and subtracting that from total payment by consumers to producers for gasoline (P~eq~*Q~eq~):
 
 Producer surplus under status quo = \$`r round(SQ_PS_total,0)`.
 
@@ -266,15 +268,15 @@ MSC_Q_eq <- (MEC-int_agg)/(m_agg-m_MC)
 #Use the new equilibrium quantity to find the price
 MSC_P_eq <- (m_MC*MSC_Q_eq+ MEC)
 ```
-The new price of gasoline is found by solving the marginal social cost curve for P~eq~ given the new equilibrium quantity calculated in Part 4.b above:
+The new price of gasoline is found by solving the marginal social cost curve for P~[socially optimal]~ given the socially optimal equilibrium quantity calculated in Part 4.a above:
 
-  Price~[socially optimal]~ = `r round(m_MC,6)`*`r round(MSC_Q_eq,1)` + `r round(MEC,2)`= \$ `r round(MSC_P_eq,2)` 
+  Price~[socially optimal]~ = `r round(m_MC,6)`*`r round(MSC_Q_eq,1)` + `r round(MEC,2)`= \$ `r round(MSC_P_eq,2)` /gal
 
 #### c. Overall welfare of "high" income consumers
 
-+ Calculate the welfare of "high" income consumer by determining the consumer surplus at the new equilibrium and subtracting the cost of purchasing gas
+Calculate the welfare of "high" income consumer by determining the consumer surplus at the new equilibrium and subtracting the cost of purchasing gas
 
-+ Solve D~high~ = `r round(m_high,6)`Q + `r round(int_high,2)` at the new socially optimum equilibrium price \$`r round(MSC_P_eq, 2)`/gal
++ Solve D~high~ = `r round(m_high,6)`Q + `r round(int_high,2)` for Q, at the socially optimum equilibrium price \$`r round(MSC_P_eq, 2)`/gal determined in Part 4.b above
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #Quantity purchased at new socially optimal equilibrium 
@@ -289,11 +291,11 @@ CS_high_MSC_total <- CS_high_MSC$value - MSC_P_eq*MSC_Q_eq_high
 
 + Integrate "high" demand curve (`r round(m_high, 6)`Q + `r round(int_high, 2)`) from 0 to `r round(MSC_Q_eq_high, 2)` then subtract the cost of purchasing gas (\$`r round(MSC_P_eq, 2)`/gal*`r round(MSC_Q_eq_high, 2)` gal)
 
-    Welfare~[SO high]~ = \$`r round(CS_high_MSC_total,1)` 
+    High demander welfare = \$`r round(CS_high_MSC_total,1)` 
 
 #### d. Overall welfare of "low" income consumers
 
-Calculate the welfare to the low income group by determining the consumer surplus at the new equilibrium and subtracting the cost of purchasing gas and total environmental cost of consuming gas at the new socially optimal equilibrium
+Calculate the welfare to the low income group by determining the consumer surplus at the socially optimal equilibrium price and quantity. Additionally, because the "low" income group bears the entire cost of the negative externality, the total environmental cost of consuming gas by both income groups must also be subtracted from the low demanders consumer surplus.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #MEC*quantity of gas consumed
@@ -325,13 +327,13 @@ D_agg_area <- integrate(D_agg, lower = MSC_Q_eq, upper = Q_eq)
 MSC_welfare_low <- (CS_low_MSC_total-TED)
 ```
 
-+ Solve D~low~ = `r round(m_low,6)`Q + `r round(int_low,2)` at the new socially optimum equilibrium price \$`r round(MSC_P_eq, 2)`/gal
++ Solve D~low~ = `r round(m_low,6)`Q + `r round(int_low,2)` for Q, at the socially optimum equilibrium price \$`r round(MSC_P_eq, 2)`/gal determined in Part 4.b above
 
-    Q~SO~ = `r round(MSC_Q_eq_low, 2)`gallons
+    Q~[SO low]~ = `r round(MSC_Q_eq_low, 2)`gallons
 
-+ Integrate "low" demand curve (`r round(m_low, 6)`Q + `r round(int_low, 2)`) from 0 to `r round(MSC_Q_eq_low, 2)` then subtract the cost of purchasing gas (\$`r round(MSC_P_eq,2)`/gal*`r round(MSC_Q_eq_low, 2)` gal)
++ Integrate "low" demand curve (`r round(m_low, 6)`Q + `r round(int_low, 2)`) from 0 to `r round(MSC_Q_eq_low, 2)` then subtract the cost of purchasing gas (\$`r round(MSC_P_eq,2)`/gal*`r round(MSC_Q_eq_low, 2)` gal) and the total cost of environmental damage from all of society's gas consumption (MECxQ~SO~)
 
-    Consumer Surplus = \$`r round(CS_low_MSC_total,2)`
+    Low demander welfare = \$`r round(MSC_welfare_low,2)`
  
 
 #### e. Gas producers
@@ -339,7 +341,7 @@ MSC_welfare_low <- (CS_low_MSC_total-TED)
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #Amount of gas sold 
-income <- MSC_P_eq*MSC_Q_eq
+income <- MSC_P_eq*MSC_Q_eq - TED
 
 #Cost of production
 cost <- integrate (MC, lower = 0, upper = MSC_Q_eq)
@@ -348,17 +350,17 @@ cost <- integrate (MC, lower = 0, upper = MSC_Q_eq)
 revenue <- income - cost$value
 ```
 
-Find the welfare of the producers by finding the total income generated at the socially optimal equilibrium and subtracting the cost of production. 
+Find the welfare of the producers by finding the total income generated at the socially optimal equilibrium and subtracting the tax revenue and the cost of production. 
 
-+ Income = P~SO~*Q~SO~
-+ Cost: Integrate MPC curve (`r round(m_MC, 6)`Q) from 0 to Q~SO~ (`MSC_Q_eq` gal)
++ Income = P~SO~*Q~SO~ - tax revenue
++ Cost: Integrate MPC curve (`r round(m_MC, 6)`Q) from 0 to Q~SO~ (`r round(MSC_Q_eq,0)` gal)
 + Welfare: Income - Cost
 
 Welfare = \$ `r round(revenue, 2)`
 
 #### f. Total environmental damage
 
-Total environmental damage is the MEC curve evaluated at the new socially optimum equilibrium 
+Total environmental damage is found by multiplying the MEC (\$`r round(MEC, 2)` per gallon) by the quantity of gas consumed Q~SO~ (`r round(MSC_Q_eq,2)`) gallons
 
 
 
@@ -367,15 +369,15 @@ TED = \$`r round(TED,2)`
 #### g. Total tax revenue generated
 
 
-Tax revenue is found by multiplying the MEC (\$ `r round(MEC, 2)`per gallon) by the quantity consumed Q~SO~ (`r round(MSC_Q_eq,2)`)gallons
+Because the tax equals the MEC, tax revenue equals total environmental damage, which was found by multiplying the MEC/tax (\$`r round(MEC, 2)` per gallon) by the quantity consumed Q~SO~ (`r round(MSC_Q_eq,2)`) gallons
 
-Tax Revenue= \$ `r round(TED,2)` 
+Tax Revenue= \$`r round(TED,2)` 
 
 # Part 5
 
-*Now, assume that all revenue from the gas tax will be redistributed to the consumers in proportion to their pre-tax consumption of gas. For example, if 80% of the gas was consumed by “high” income consumers, then they get 80% of the tax revenue. Additionally, consider the fact that current scientific evidence suggests the true SCC may be much higher than $51. For a range of SCC values ($51, $75, $100, $125, and $150 per metric ton of CO2), calculate the effects of an SCC-based gasoline tax on:*
+*Now, assume that all revenue from the gas tax will be redistributed to the consumers in proportion to their pre-tax consumption of gas. For example, if 80% of the gas was consumed by “high” income consumers, then they get 80% of the tax revenue. Additionally, consider the fact that current scientific evidence suggests the true SCC may be much higher than $51. For a range of SCC values ($51, $75, $100, $125, and $150 per metric ton of CO~2~), calculate the effects of an SCC-based gasoline tax on overall welfare of “high” income consumers, overall welfare of “low” income consumers, and gas producers.*
 
-Taxes are redistributed proportional to original consumption of gas between high and low income groups at the free market equilibrium price.
+Taxes are redistributed proportional to original consumption of gas between high and low income groups at the free market equilibrium price as determined in Part 3 above.
 
 Proportion= Q~group~/Q~total~
 
@@ -473,7 +475,6 @@ tr_150_high=tax_rev_150*prop_high
 ```
 
 
-#### a. Overall welfare of “high” income consumers
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #Determine quantity purchased at new socially optimal equilibrium 
 # $75
@@ -516,17 +517,7 @@ wf_high_MSC_125<- CS_high_MSC_125$value - (MSC_125_P_eq*MSC_125_Q_eq_high) + tr_
 CS_high_MSC_150 <- integrate(D_high, lower = 0, upper = MSC_150_Q_eq_high)
 wf_high_MSC_150 <- CS_high_MSC_150$value - (MSC_150_P_eq*MSC_150_Q_eq_high) + tr_150_high
 ```
-Welfare~$51~= \$`r round(wf_high_MSC, 2)`
 
-Welfare~$75~= \$`r round(wf_high_MSC_75, 2)`
-
-Welfare~$100~= \$`r round(wf_high_MSC_100, 2)`
-
-Welfare~$125~= \$`r round(wf_high_MSC_125, 2)`
-
-Welfare~$150~= \$`r round(wf_high_MSC_150, 2)`
-
-#### b. Overall welfare of “low” income consumers
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #Determine quantity purchased at new socially optimal equilibrium
@@ -573,59 +564,39 @@ CS_low_MSC_150 <- integrate(D_low, lower = 0, upper = MSC_150_Q_eq_low)
 wf_low_MSC_150 <- CS_low_MSC_150$value - (MSC_150_P_eq*MSC_150_Q_eq_low) + tr_150_low -tax_rev_150
 
 ```
-Welfare~$51~= \$`r round(wf_low_MSC, 2)`
 
-Welfare~$75~= \$`r round(wf_low_MSC_75, 2)`
-
-Welfare~$100~= \$`r round(wf_low_MSC_100, 2)`
-
-Welfare~$125~= \$`r round(wf_low_MSC_125, 2)`
-
-Welfare~$150~= \$`r round(wf_high_MSC_150, 2)`
-
-#### c. Gas producers
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Amount of gas sold 
-# income=P($/gal)*Q(gals)
-income <- MSC_P_eq*MSC_Q_eq
-
-#Cost of production
-#Area under the mc curve from 0 to the quantity produced, Q (gal)
-cost <- integrate (MC, lower = 0, upper = MSC_Q_eq)
-
-#Revenue
-#Income-cost of production
-revenue <- income - cost$value
 
 # $51
-income_51 <- MSC_P_eq*MSC_Q_eq
+income_51 <- MSC_P_eq*MSC_Q_eq - tax_rev_51
 cost_51 <- integrate (MC, lower=0, upper = MSC_Q_eq)
 revenue_51 <- income_51 - cost_51$value
 
 # $75
-income_75 <- MSC_P_eq*MSC_75_Q_eq
+income_75 <- MSC_75_P_eq*MSC_75_Q_eq - tax_rev_75
 cost_75 <- integrate (MC, lower=0, upper = MSC_75_Q_eq)
 revenue_75 <- income_75 - cost_75$value
 
 # $100
-income_100 <- MSC_P_eq*MSC_100_Q_eq
+income_100 <- MSC_100_P_eq*MSC_100_Q_eq - tax_rev_100
 cost_100 <- integrate (MC, lower=0, upper = MSC_100_Q_eq)
 revenue_100 <- income_100 - cost_100$value
 
 # $125
-income_125 <- MSC_P_eq*MSC_125_Q_eq
+income_125 <- MSC_125_P_eq*MSC_125_Q_eq - tax_rev_125
 cost_125 <- integrate (MC, lower=0, upper = MSC_125_Q_eq)
 revenue_125 <- income_125 - cost_125$value
 
 # $150
-income_150 <- MSC_P_eq*MSC_150_Q_eq
+income_150 <- MSC_150_P_eq*MSC_150_Q_eq - tax_rev_150
 cost_150 <- integrate (MC, lower=0, upper = MSC_150_Q_eq)
 revenue_150 <- income_150 - cost_150$value
 
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, include = FALSE}
 
 # Graph for reference
 ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
@@ -661,6 +632,7 @@ ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
   theme_minimal()
 
 ```
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #Let's make a table!
@@ -733,16 +705,51 @@ part_5_table <- data.frame(SCC = SCC, MEC = MEC_col, Peq = Peq_col, Qeq = Qeq_co
                            gas_rev = gas_rev_col)
 ```
 
+
+First, the range of SCC values were converted to marginal external cost (MEC) of one gallon of gas using the same formula provided in Part 1 above. The MEC for each SCC value equals the SCC-based gasoline tax:
+
++ $51/ton CO2~~ results in an MEC/SCC-based gasoline tax of \$`r round(MEC,2)`/gal
++ $75/ton CO~2~ results in an MEC/SCC-based gasoline tax of \$`r round(MEC_75,2)`/gal
++ $100/ton CO~2~ results in an MEC/SCC-based gasoline tax of \$`r round(MEC_100,2)`/gal
++ $125/ton CO~2~ results in an MEC/SCC-based gasoline tax of \$`r round(MEC_125,2)`/gal
++ $150/ton CO~2~ results in an MEC/SCC-based gasoline tax of \$`r round(MEC_150,2)`/gal
+
+Second, the new marginal social cost curve for each level of tax was determined to be the Marginal Cost curve determined in Part 2 plus the SCC-based gasoline tax. For example, MSC~[SCC = \$100]~ = `r round(m_MC,6)`Q + `r round(MEC_100,2)`
+
+Third, the socially optimal equilibrium quantity of gas sold was calculated by finding the intersection of the aggregate demand curve from Part 2 and the MSC.
+
+Fourth, the total tax revenue generated by the tax was calculated by multiplying the socially optimal equilibrium quantity of gas sold that was determined above by the MEC. Then, the amount of tax revenue redistributed to each income group was calculated by multiplying the total tax revenue generated by the original "Percentage Consumed" of each income group determined above.
+
+Fifth, the socially optimal price of gasoline was calculated by solving the total aggregate demand curve for P~eq~ given the Q~eq~ determined above.
+
+Sixth, the quantity of gas purchased by each income group was determined by solving each group's demand curve (determined in Part 2) given the P~eq~ determined above.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Create stylized table for report of just Ps and Qs
+
+part_5_table %>% 
+  select(SCC, Peq, Qeq, Qeq_high, Qeq_low) %>% 
+  kable(digits = 2, format.args = list(big.mark = ","), 
+    caption = "Table 1",
+    col.names = c("SCC (USD/ton CO~2~)", "Price of gas/gal", "Total Q of gas sold (gal)", "Q of gas sold (gal) to high demanders", "Q of gas sold (gal) to low demanders")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = TRUE)
+```
+
+
+Seventh, welfare of each consumer group was determined by integrating each group's demand curve from 0 to the quantity of gas consumed by the group given the MSC/SCC-based gasoline tax. Then the cost of purchasing the gas (P~eq~*Q~eq~) was subtracted from the integral value. For the low income group, total environmental damage  was also subtracted from the integral. Lastly, tax revenue redistributed to each group was added. Results are shown in the table below.
+
+Eighth, welfare to gas producers was calculated by multiplying the price of gas by the quantity sold and subtracting the tax revenue and the cost of production. Cost of production was determined as the integral of the marginal cost curve from 0 to the equilibrium quantity sold.
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # Create stylized table for report
 
 part_5_final <- part_5_table %>% 
-  select(SCC, TED, welfare_high, welfare_low, gas_rev)
+  select(SCC, tr_high, welfare_high, tr_low, TED, welfare_low, gas_rev)
 
 part_5_final %>% 
   kable(digits = 0, format.args = list(big.mark = ","), 
-    caption = "Caption",
-    col.names = c("SCC", "Total Environmental Damage", "Welfare to high demanders", "Welfare to low demanders","Welfare to gas producers")) %>% 
+    caption = "Table 2 (all values in USD unless otherwise noted)",
+    col.names = c("SCC (USD/ton CO~2~)", "Tax revenue to high demanders", "Welfare to high demanders", "Tax revenue to low demanders", "Total Environmental Damage", "Welfare to low demanders","Welfare to gas producers")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = TRUE)
 ```
 
