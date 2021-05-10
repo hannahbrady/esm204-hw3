@@ -754,6 +754,90 @@ part_5_final %>%
 ```
 
 
+# Part 6
+
+*Suppose a new electric car technology is invented but only the “high” income group has access to these expensive new cars. This lowers the gasoline demand curve for the “high” income group by half (vertically)*
+ 
+Begin by deriving a new demand curve for the high income group. 
+
+Solve for a new y-intercept for the demand curve by reducing the previous intercept (P=`r round(int_high,2)`) by half. The slope for the new demand curve will remain the same (m= `r round(m_high,6)`) because the total demand for gasoline has just shifted. 
+
+```{r}
+#Determine the new demand curve for the high income group
+#the y-intercept is lowered by half
+
+int_high_e <- (int_high/2)
+D_high_e<- function(Q){m_high*Q + int_high_e}
+```
+ 
+The resulting new high income demand curve is P=`r round(m_high,6)`*Q-`r round(int_high_e,2)` 
+
+Use the new high income demand curve to generate an aggregate demand curve by summing individual demand curves. Solve each equation for Q, add both equations together, and re-solve for P. The aggregate demand equals the demand for the low income consumer group at prices where only the low demand consumer group has demand: 
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#generate a new aggregate demand curve by summing horizontally
+
+# Solve for intercepts for aggregate demand
+int_agg_e<- ((int_low/m_low)+(int_high_e/m_high))/(1/(m_low)+1/(m_high))
+
+# Create functions for all three demand curves
+D_agg_e<- function(Q){m_agg*Q + int_agg_e}
+```
+
+The resulting aggregate demand curve when electric technology is introduced is P=`r round(m_agg,6)`*Q+`r round(int_agg_e,2)`
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Graph for reference
+ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
+  stat_function(fun = D_agg_e, aes(color = "Agg.Demand-Electric")) +
+  stat_function(fun = D_low, aes(color = "Low Demand")) +
+  stat_function(fun = D_high_e, aes(color = "High Demand-Electric")) +
+  stat_function(fun = MC, aes(color = "Supply")) +
+  scale_x_continuous(name = "Q (Gallons)") +
+  scale_y_continuous(name = "P ($/gal)",limits = c(0, NA)) +
+  labs(color = "Curve") +
+  theme_minimal()
+```
+
+
+#### (a) What is total gas consumption? 
+
+The new equilibrium quantity of gas is found by setting the aggregate demand curve with electric technology equal to the supply curve and solving for . 
+
+`r round(m_agg,6)`* Q+`r round(int_agg_e,2)`=  `r round(m_MC,6)`*Q
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#solve for the new equilibrium gas quantity sold
+# D: P=m1*Q+a
+# S: P=m2*Q+b
+# m1*Q+a=m2*Q+b
+# (m1-m2)*Q=(b-a)
+# Q=(b-a)/(m1-m2)
+
+Q_eq_e <- (0-int_agg_e)/(m_agg-m_MC)
+```
+
+Q~eq,e~= \$`r round(Q_eq_e, 2)`
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Find the new equilibrium price 
+
+# Evaluate the demand curve at the new equilibrium quantity 
+
+P_eq_e <- (m_MC)*(Q_eq_e)
+```
+
+
+#### (b) What is the total environmental externality?
+
+```{r}
+# The total environmental externality is the quantity of gas consumed multiplied by the marginal externality cost
+
+TED_e <- MEC*Q_eq_e
+```
+ 
+#### (c) What value of the gasoline tax makes the total environmental damage the same as the electric car technology?*
+
 
 
 
