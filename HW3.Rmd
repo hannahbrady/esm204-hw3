@@ -762,7 +762,7 @@ Begin by deriving a new demand curve for the high income group.
 
 Solve for a new y-intercept for the demand curve by reducing the previous intercept (P=`r round(int_high,2)`) by half. The slope for the new demand curve will remain the same (m= `r round(m_high,6)`) because the total demand for gasoline has just shifted. 
 
-```{r}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 #Determine the new demand curve for the high income group
 #the y-intercept is lowered by half
 
@@ -793,6 +793,8 @@ ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
   stat_function(fun = D_low, aes(color = "Low Demand")) +
   stat_function(fun = D_high_e, aes(color = "High Demand-Electric")) +
   stat_function(fun = MC, aes(color = "Supply")) +
+   stat_function(fun = D_high, aes(color = "High Demand")) +
+   stat_function(fun = D_agg, aes(color = "Agg. Demand")) +
   scale_x_continuous(name = "Q (Gallons)") +
   scale_y_continuous(name = "P ($/gal)",limits = c(0, NA)) +
   labs(color = "Curve") +
@@ -817,7 +819,7 @@ The new equilibrium quantity of gas is found by setting the aggregate demand cur
 Q_eq_e <- (0-int_agg_e)/(m_agg-m_MC)
 ```
 
-Q~eq,e~= \$`r round(Q_eq_e, 2)`
+Q~eq,e~= `r round(Q_eq_e, 2)` gallons
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Find the new equilibrium price 
@@ -830,16 +832,41 @@ P_eq_e <- (m_MC)*(Q_eq_e)
 
 #### (b) What is the total environmental externality?
 
-```{r}
-# The total environmental externality is the quantity of gas consumed multiplied by the marginal externality cost
+Calculate the total environmental damage assuming the social cost of carbon is $51/ton of CO~2~ emitted. 
+
+Total environmental damage is calculated by multiplying the marginal external cost (MEC= \$`r round(MEC, 2)`) calculated in section 2 by the new equilibrium quantity of gas sold (Q=`r round(Q_eq_e, 2)` gal)
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# TED = MEC*Q
 
 TED_e <- MEC*Q_eq_e
 ```
- 
+
+Total Environmental Damage= \$`r round(TED_e,2)`
+
 #### (c) What value of the gasoline tax makes the total environmental damage the same as the electric car technology?*
 
+The total environmental damage is found by multiplying the marginal external cost by the quantity of gas at equilibrium. 
 
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#Find that would result in the same TED
+# TED=Q*t
+# t= P-3
+# Solve for Q of the total marginal cost curve: P=m_MC*Q+t
+# Q=(P-t)/m_MC= (P-(P-3))m_MC = 3/m_MC
+# TED= (3/m_MC)(P-3)
+# Solve for P: P= TED*(m_MC/3)+3
+P_e_tax <- ((TED_e*m_MC)/3)+3
 
+#calculate tax: P= 3+t
+tax_e<- P_e_tax-3
+
+#Check work 
+Q_tax_e <- (P_e_tax-tax_e)/(m_MC)
+TED_t_e <- Q_tax_e*tax_e
+```
+
+The tax to generate the same total environmental damage as adopting electric vehicle technology is \$`r round(tax_e,2)`. 
 
 
 
