@@ -2,10 +2,9 @@
 title: "ESM 204 HW 3"
 author: "Hannah Brady and Janelle Gaun"
 date: "5/6/2021"
-output: 
-  pdf_document: default
-  html_document: default
+output:
   word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -797,9 +796,6 @@ D~agg-e~ , P > `r round(int_high_e,1)` = `r round(m_low,6)`Q + `r round(int_low,
 
 <<<<<<< HEAD
 ```{r echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
-=======
-```{r echo = FALSE, message = FALSE, warning = FALSE, fig.show= 'hide'}
->>>>>>> ad12505fddc102fc3217f855dc952c8648c1d6b1
 # Graph for reference
 ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
   stat_function(fun = D_agg_e, aes(color = "Agg.Demand-Electric")) +
