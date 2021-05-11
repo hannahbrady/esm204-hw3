@@ -791,7 +791,7 @@ D~agg-e~ , P < `r round(int_high_e,1)` = `r round(m_agg,6)`*Q + `r round(int_agg
 
 D~agg-e~ , P > `r round(int_high_e,1)` = `r round(m_low,6)`Q + `r round(int_low,1)`
 
-```{r echo = FALSE, message = FALSE, warning = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
 # Graph for reference
 ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
   stat_function(fun = D_agg_e, aes(color = "Agg.Demand-Electric")) +
