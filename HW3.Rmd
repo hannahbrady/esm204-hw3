@@ -774,6 +774,7 @@ D_high_e<- function(Q){m_high*Q + int_high_e}
  
 The resulting new high income demand curve is D~high-e~ = `r round(m_high,6)`*Q + `r round(int_high_e,2)` 
 
+
 Use the new high income demand curve to generate a new aggregate demand curve by horizontally summing individual demand curves of low income group (unchanged) and new high income group demand. To sum horizontally, solve each equation for Q, add both equations together, and re-solve for P. The new high income demand curve is lower than the low income demand curve. This means that the aggregate demand equals the demand for the low income consumer group at prices where only the low demand consumer group has demand (i.e. the "kinked" portion of the new aggregate demand curve). The resulting aggregate demand curve when electric technology is introduced is therefore:
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
@@ -791,7 +792,7 @@ D~agg-e~ , P < `r round(int_high_e,1)` = `r round(m_agg,6)`*Q + `r round(int_agg
 
 D~agg-e~ , P > `r round(int_high_e,1)` = `r round(m_low,6)`Q + `r round(int_low,1)`
 
-```{r echo = FALSE, message = FALSE, warning = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE, fig.show= 'hide'}
 # Graph for reference
 ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
   stat_function(fun = D_agg_e, aes(color = "Agg.Demand-Electric")) +
@@ -810,6 +811,7 @@ ggplot(data.frame(Q = c(0, 800000)), aes(x = Q)) +
 #### (a) What is total gas consumption? 
 
 The new equilibrium quantity of gas is found by setting the aggregate demand curve with electric technology equal to the supply curve (unchanged from earlier parts) and solving for Q.
+
 
 `r round(m_agg,6)`* Q + `r round(int_agg_e,2)` =  `r round(m_MC,6)`*Q
 
@@ -847,16 +849,17 @@ Total environmental damage is calculated by multiplying the marginal external co
 TED_e <- MEC*Q_eq_e
 ```
 
+
 Total Environmental Damage = \$`r round(TED_e,2)`
 
 #### (c) What value of the gasoline tax makes the total environmental damage the same as the electric car technology?
 
-Evaluate the original aggregate demand and the supply curve at the new equilibrium quantity determined in 6(a)  to determine the marginal benefit and the marginal cost at Q = `r round(Q_eq_e, 0)` gal. The tax to limit environmental damage is the difference between marginal benefit and marginal cost curves at the quantity, Q~e, eq~. 
+Evaluate the original aggregate demand curve and the supply curve at the new equilibrium quantity determined in 6(a) to determine the marginal benefit and the marginal cost at Q~e,eq~ = `r round(Q_eq_e, 0)` gal. The tax to ensure reduce environmental damage to the electric technology levels is the difference between of the marginal benefit and marginal cost curves at the quantity, Q~e,eq~. 
 
-Aggregate Demand = `r round(m_agg, 6)`*Q + `r round(int_agg,2)`
-Aggregate Supply = `r round(m_MC, 6)`*Q 
+Aggregate Demand: P =`r round(m_agg, 6)`*Q + `r round(int_agg,2)`
 
-P~d~(Q~e,eq~)= \$
+Supply: P =`r round(m_MC, 6)`*Q 
+
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -868,8 +871,10 @@ S_q_eq_e <- MC(Q_eq_e)
 new_tax <- D_agg_q_eq_e - S_q_eq_e
 
 ```
-P~d~(Q~e,eq~)= \$`r round(D_agg_q_eq_e,2)`
-P~s~(Q~e,eq~)= \$`r round(S_q_eq_e,2)`
+
+P~d~(`r round(Q_eq_e, 0)`)= \$`r round(D_agg_q_eq_e,2)`
+
+P~s~(`r round(Q_eq_e, 0)`)= \$`r round(S_q_eq_e,2)`
 
 New Tax: \$`r round(new_tax,2)`
 
