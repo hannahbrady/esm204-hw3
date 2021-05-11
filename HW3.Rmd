@@ -851,27 +851,12 @@ Total Environmental Damage = \$`r round(TED_e,2)`
 
 #### (c) What value of the gasoline tax makes the total environmental damage the same as the electric car technology?
 
-The total environmental damage is found by multiplying the marginal external cost by the quantity of gas at equilibrium. 
+Evaluate the original aggregate demand and the supply curve at the new equilibrium quantity determined in 6(a)  to determine the marginal benefit and the marginal cost at Q = `r round(Q_eq_e, 0)` gal. The tax to limit environmental damage is the difference between marginal benefit and marginal cost curves at the quantity, Q~e, eq~. 
 
-```{r echo = FALSE, message = FALSE, warning = FALSE}
-#Find that would result in the same TED
-# TED=Q*t
-# t= P-3
-# Solve for Q of the total marginal cost curve: P=m_MC*Q+t
-# Q=(P-t)/m_MC= (P-(P-3))m_MC = 3/m_MC
-# TED= (3/m_MC)(P-3)
-# Solve for P: P= TED*(m_MC/3)+3
-P_e_tax <- ((TED_e*m_MC)/3)+3
+Aggregate Demand = `r round(m_agg, 6)`*Q + `r round(int_agg,2)`
+Aggregate Supply = `r round(m_MC, 6)`*Q 
 
-#calculate tax: P= 3+t
-tax_e<- P_e_tax-3
-
-#Check work 
-Q_tax_e <- (P_e_tax-tax_e)/(m_MC)
-TED_t_e <- Q_tax_e*tax_e
-```
-
-The tax to generate the same total environmental damage as adopting electric vehicle technology is \$`r round(tax_e,2)`. 
+P~d~(Q~e,eq~)= \$
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -881,9 +866,12 @@ D_agg_q_eq_e <- D_agg(Q_eq_e)
 S_q_eq_e <- MC(Q_eq_e)
 
 new_tax <- D_agg_q_eq_e - S_q_eq_e
-new_tax
 
 ```
+P~d~(Q~e,eq~)= \$`r round(D_agg_q_eq_e,2)`
+P~s~(Q~e,eq~)= \$`r round(S_q_eq_e,2)`
+
+New Tax: \$`r round(new_tax,2)`
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
